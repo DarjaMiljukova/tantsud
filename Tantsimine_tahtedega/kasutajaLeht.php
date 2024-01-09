@@ -3,6 +3,23 @@ require ('conf.php');
 session_start();
 
 
+//kommentaaride lisamine
+
+if(isset($_REQUEST["komment"])){
+    if(!empty($_REQUEST["uuskomment"])){
+        global $yhendus;
+        $kask=$yhendus->prepare("UPDATE tantsud SET kommentaarid=CONCAT(kommentaarid,?) WHERE id=?");
+        $kommentplus=$_REQUEST["uuskomment"]. "\n";
+        $kask->bind_param("is", $kommentdplus, $_REQUEST["komment"]);
+        $kask->execute();
+        header("Location: $_SERVER[PHP_SELF]");
+        $yhendus->close();
+        //exit();
+
+    }
+
+}
+
 //punktide lisamine
 if(isset($_REQUEST["heatants"])){
     global $yhendus;
@@ -111,7 +128,7 @@ if (isset($_SESSION['kasutaja'])) {
 <?php
 global $yhendus;
     $kask=$yhendus->prepare("SELECT id, tantsupaar, punktid, ava_paev, kommentaarid FROM tantsud WHERE avalik=1");
-    $kask->bind_result($id, $tantsupaar, $punktid, $avapaev, $kommentaarid);
+    $kask->bind_result($id, $tantsupaar, $punktid, $avapaev, $komment);
     $kask->execute();
     while($kask->fetch()){
         echo "<tr>";
@@ -119,7 +136,7 @@ global $yhendus;
         echo "<td>".$tantsupaar."</td>";
         echo "<td>".$punktid."</td>";
         echo "<td>".$avapaev."</td>";
-        echo "<td>".$kommentaarid."</td>";
+        echo "<td>".nl2br(htmlspecialchars($komment))."</td>";
         echo "<td>
 <form action='?'>
         <input type='hidden' value='$id' name='komment'>
