@@ -1,5 +1,6 @@
+<?php if (isset($_GET['code'])) {die(highlight_file(__FILE__, 1));}?>
 <?php
-require ('conf.php');
+require ('conf2.php');
 session_start();
 
 
@@ -7,7 +8,7 @@ session_start();
 if(isset($_REQUEST["punktid0"])){
     global $yhendus;
     $kask=$yhendus->prepare("UPDATE tantsud SET punktid=0 WHERE id=?");
-    $kask->bind_param("i", $_REQUEST["heatants"]);
+    $kask->bind_param("i", $_REQUEST["punktid0"]);
     $kask->execute();
 }
 
@@ -23,6 +24,22 @@ if(isset($_REQUEST["naitmine"])){
     $kask=$yhendus->prepare("UPDATE tantsud SET avalik=1 WHERE id=?");
     $kask->bind_param("i", $_REQUEST["naitmine"]);
     $kask->execute();
+}
+
+if (isset($_REQUEST["kustutapaar"])) {
+    global $yhendus;
+    $kask = $yhendus->prepare("DELETE FROM tantsud WHERE id=?");
+    $kask->bind_param("i", $_REQUEST["kustutapaar"]);
+    $kask->execute();
+}
+
+if (isset($_REQUEST["kustutakomment"])){
+    global $yhendus;
+    $kask = $yhendus->prepare("UPDATE tantsud SET kommentaarid='' WHERE id=?");
+    $kask->bind_param("i", $_REQUEST["kustutakomment"]);
+    $kask->execute();
+    header("Location: $_SERVER[PHP_SELF]");
+    $yhendus->close();
 }
 
 ?>
@@ -66,11 +83,12 @@ if(isset($_REQUEST["naitmine"])){
     <tr>
         <th>Tansupaari nimi</th>
         <th>Punktid</th>
-        <th>Kuupäev</th>
         <th>Kommentaarid</th>
         <th>Avalik</th>
         <th></th>
         <th></th>
+        <th>Kustuta paar</th>
+        <th>Kustuta kommentaarid</th>
     </tr>
 
 <?php
@@ -93,11 +111,13 @@ global $yhendus;
         $tantsupaar=htmlspecialchars($tantsupaar);
         echo "<td>".$tantsupaar."</td>";
         echo "<td>".$punktid."</td>";
-        echo "<td>".$paev."</td>";
+
         echo "<td>".$komment."</td>";
         echo "<td>".$avalik."/".$tekst2."</td>";
         echo "<td><a href='?punktid0=$id'>Punktid Nulliks!</a></td>";
         echo "<td><a href='?$seisund=$id'>$tekst</a></td>";
+        echo "<td><a href='?kustutapaar=$id'>Kustuta paar</a></td>";
+        echo "<td><a href='?kustutakomment=$id'>Kustuta kommentaarid</a></td>";
         echo "</tr>";
     }
 ?>

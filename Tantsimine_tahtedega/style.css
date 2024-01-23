@@ -84,6 +84,7 @@ li a:hover {
     padding: 20px;
     border: 1px solid #67797B;
     width: 40%;
+    text-align: center;
 }
 
 .close {
